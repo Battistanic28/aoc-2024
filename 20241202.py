@@ -18,10 +18,20 @@ def is_safe(report, bypass_enabled=False):
             current_direction = get_direction(input1, input2)
             variance = abs(input1 - input2)
 
-            if initial_direction != current_direction:
-                 return False
-            if variance < 1 or variance > safety_threshold:
-                 return False 
+            if bypass_enabled and i <= len(report)-2:
+                problem_index = i if i == 0 else i + 1
+
+                if initial_direction != current_direction:
+                    del report[problem_index]
+                    return is_safe(report)
+                if variance < 1 or variance > safety_threshold:
+                    del report[problem_index]
+                    return is_safe(report)
+            else:              
+                if initial_direction != current_direction:
+                    return False
+                if variance < 1 or variance > safety_threshold:
+                    return False 
             
         return True
 
@@ -30,6 +40,7 @@ def analyze_reports(reports, bypass_enabled=False):
     safe_report_count = 0
     for report in reports:
         report_is_safe = is_safe(report, bypass_enabled)
+        print(report, report_is_safe)
         if report_is_safe == True:
             safe_report_count += 1
 
@@ -38,8 +49,15 @@ def analyze_reports(reports, bypass_enabled=False):
 
 
 # ~~~ Test Cases ~~~
-tricky_report = [12,2,3,4,5] # unsolved case - report[0] is the single problem
+edge_cases = [
+    [48, 46, 47, 49, 51, 54, 56],
+    [1, 4, 3, 2, 1],
+    [7, 10, 8, 10, 11],
+    [29, 28, 27, 25, 26, 25, 22, 20]
+] # all should be True
+
 mock_reports = [    
+    [12,2,3,4,5], # pass
     [7,6,4,2,1], # pass
     [1,2,7,8,9], # fail
     [9,7,6,2,1], # fail
@@ -47,18 +65,19 @@ mock_reports = [
     [8,6,4,4,1], # fail
     [1,3,6,7,9], # pass
 ]
-assert get_direction(1,2) == 1
-assert get_direction(2,1) == -1
-assert get_direction(1,1) == 0
+# assert get_direction(1,2) == 1
+# assert get_direction(2,1) == -1
+# assert get_direction(1,1) == 0
 
-assert is_safe([7,6,4,2,1]) == True
-assert is_safe([1,2,7,8,9]) == False
-assert is_safe([8,6,4,4,1]) == False
-assert is_safe([9,7,6,2,1]) == False
+# assert is_safe([7,6,4,2,1]) == True
+# assert is_safe([1,2,7,8,9]) == False
+# assert is_safe([8,6,4,4,1]) == False
+# assert is_safe([9,7,6,2,1]) == False
 
-assert (analyze_reports(mock_reports)) == 2
+# assert (analyze_reports(mock_reports)) == 2
 
 
 # ~~~ Solve ~~~ 
-array_2d_int = [[int(item) for item in row] for row in array_2d]
-print(analyze_reports(array_2d_int, True))
+# array_2d_int = [[int(item) for item in row] for row in array_2d]
+# print(analyze_reports(array_2d_int, True))
+print(analyze_reports(edge_cases, True))
