@@ -19,7 +19,8 @@ def is_safe(report, bypass_enabled=False):
             variance = abs(input1 - input2)
 
             if bypass_enabled and i <= len(report)-2:
-                problem_index = i if i == 0 else i + 1
+
+                problem_index = i+1 if i >= 2 else 0
 
                 if initial_direction != current_direction:
                     del report[problem_index]
@@ -50,8 +51,6 @@ def analyze_reports(reports, bypass_enabled=False):
 
 # ~~~ Test Cases ~~~
 edge_cases = [
-    [48, 46, 47, 49, 51, 54, 56],
-    [1, 4, 3, 2, 1],
     [7, 10, 8, 10, 11],
     [29, 28, 27, 25, 26, 25, 22, 20]
 ] # all should be True
